@@ -1695,14 +1695,14 @@ files = [
 
 [[package]]
 name = "streamlit"
-version = "1.17.0"
+version = "1.15.1"
 description = "The fastest way to build data apps in Python"
 category = "main"
 optional = false
 python-versions = ">=3.7, !=3.9.7"
 files = [
-    {file = "streamlit-1.17.0-py2.py3-none-any.whl", hash = "sha256:0b3a9539e6ebcb8e5d57d16a846c3488143e1954174d7f1b2b40bf3e919302cc"},
-    {file = "streamlit-1.17.0.tar.gz", hash = "sha256:8cdd61059971fd88ae0af507c07685a32fe08ba30ebd04b1d8d2b54160658b5b"},
+    {file = "streamlit-1.15.1-py2.py3-none-any.whl", hash = "sha256:ac8b24fa26dd5dfcd1954a340315c0b36c868c7de688259099dfd909524f1d8d"},
+    {file = "streamlit-1.15.1.tar.gz", hash = "sha256:2ec65c29b6390ff5d8288dac20fa3a4a343ac8f0755de3dc922b468a4d6ea6cc"},
 ]
 
 [package.dependencies]
@@ -1730,9 +1730,6 @@ typing-extensions = ">=3.10.0.0"
 tzlocal = ">=1.1"
 validators = ">=0.2"
 watchdog = {version = "*", markers = "platform_system != \"Darwin\""}
-
-[package.extras]
-snowflake = ["snowflake-snowpark-python"]
 
 [[package]]
 name = "toml"
@@ -1975,4 +1972,4 @@ testing = ["flake8 (<5)", "func-timeout", "jaraco.functools", "jaraco.itertools"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "7a96922454464bbcd62edb90782f2f34d6de883e5de71a73fd64d88c4e78b5cb"
+content-hash = "d7c051c3e2e2f3af14d0a85d17a5cfbd18abfa226d57f66046874b6d88555018"
