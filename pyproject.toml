@@ -4,7 +4,6 @@ version = "0.1.0"
 description = ""
 authors = ["Daniel Fonseca Alves <dalraf@gmail.com>"]
 readme = "README.md"
-packages = [{include = "acoes_profet"}]
 
 [tool.poetry.dependencies]
 python = "^3.10"
