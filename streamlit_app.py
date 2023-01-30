@@ -59,7 +59,7 @@ def executar():
         porcentagem = ((preco_previsto / preco_atual) * 100) - 100
 
         erro_medio = (
-            ((forecast["yhat"] - df_temp["y"]) ** 2).mean() / preco_atual
+            (abs(forecast["yhat"] - df_temp["y"])).mean(skipna=True) / preco_atual
         ) * 100
 
         # Analisar previsões e decidir se devemos comprar ou vender ações
