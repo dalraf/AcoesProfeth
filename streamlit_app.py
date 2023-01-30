@@ -7,6 +7,8 @@ import streamlit as st
 # Lista de tickers para baixar dados de ações
 tickers = [
     "AAPL",
+    "NU",
+    "AMZN",
     "GOOGL",
     "AMZN",
     "META",
@@ -18,13 +20,17 @@ tickers = [
     "PYPL",
     "NFLX",
     "IBM",
+    "BTC-USD",
+    "ETH-USD",
 ]
 
 analise = pd.DataFrame(
     columns=[
         "Acao",
         "Preco Atual",
-        "Preco Previsto",
+        "Preco Previsto (7 dias)",
+        "Preco Previsto (15 dias)",
+        "Preco Previsto (30 dias)",
         "Sugestao",
         "Porcentagem de lucro",
         "Erro médio percentual de previsao",
@@ -54,9 +60,11 @@ def executar():
         forecast.set_index("ds", inplace=True)
 
         preco_atual = df_temp["y"].iloc[-1]
-        preco_previsto = forecast["yhat"].iloc[-1]
-        sugestao = "Comprar" if preco_atual < preco_previsto else "Vender"
-        porcentagem = ((preco_previsto / preco_atual) * 100) - 100
+        preco_previsto_30 = forecast["yhat"].iloc[-1]
+        preco_previsto_15 = forecast["yhat"].iloc[-15]
+        preco_previsto_7 = forecast["yhat"].iloc[-23]
+        sugestao = "Comprar" if preco_atual < preco_previsto_30 else "Vender"
+        porcentagem = ((preco_previsto_30 / preco_atual) * 100) - 100
 
         erro_medio = (
             (abs(forecast["yhat"] - df_temp["y"])).mean(skipna=True) / preco_atual
@@ -66,7 +74,9 @@ def executar():
         lista_temp = [
             ticker,
             preco_atual,
-            preco_previsto,
+            preco_previsto_7,
+            preco_previsto_15,
+            preco_previsto_30,
             sugestao,
             porcentagem,
             erro_medio,
@@ -85,4 +95,4 @@ st.set_page_config(
 st.title("Ações Previsão")
 
 if st.button("Executar"):
-    st.dataframe(executar())
+    st.dataframe(executar(), use_container_width=True)
