@@ -28,11 +28,9 @@ analise = pd.DataFrame(
     columns=[
         "Acao",
         "Preco Atual",
-        "Preco Previsto (7 dias)",
-        "Preco Previsto (15 dias)",
-        "Preco Previsto (30 dias)",
-        "Sugestao",
-        "Porcentagem de lucro",
+        "Variação (7 dias) %",
+        "Variação (15 dias) %",
+        "Variação (30 dias) %",
         "Erro médio percentual de previsao",
     ]
 )
@@ -60,25 +58,21 @@ def executar():
         forecast.set_index("ds", inplace=True)
 
         preco_atual = df_temp["y"].iloc[-1]
-        preco_previsto_30 = forecast["yhat"].iloc[-1]
-        preco_previsto_15 = forecast["yhat"].iloc[-15]
-        preco_previsto_7 = forecast["yhat"].iloc[-23]
-        sugestao = "Comprar" if preco_atual < preco_previsto_30 else "Vender"
-        porcentagem = ((preco_previsto_30 / preco_atual) * 100) - 100
+        variacao_prevista_30 = ((forecast["yhat"].iloc[-1] - preco_atual) / preco_atual) * 100
+        variacao_prevista_15 = ((forecast["yhat"].iloc[-15] - preco_atual) / preco_atual) * 100
+        variacao_prevista_7 = ((forecast["yhat"].iloc[-23] - preco_atual) / preco_atual) * 100
 
         erro_medio = (
-            (abs(forecast["yhat"] - df_temp["y"])).mean(skipna=True) / preco_atual
+            (abs(forecast["yhat_upper"] - forecast["yhat_lower"])).mean(skipna=True) / preco_atual
         ) * 100
 
         # Analisar previsões e decidir se devemos comprar ou vender ações
         lista_temp = [
             ticker,
             preco_atual,
-            preco_previsto_7,
-            preco_previsto_15,
-            preco_previsto_30,
-            sugestao,
-            porcentagem,
+            variacao_prevista_7,
+            variacao_prevista_15,
+            variacao_prevista_30,
             erro_medio,
         ]
         analise.loc[len(analise)] = lista_temp
@@ -87,12 +81,17 @@ def executar():
 
 
 st.set_page_config(
-    page_title="Ações Previsão",
+    page_title="Ações Prophet",
     layout="wide",
     initial_sidebar_state="expanded",
 )
 
-st.title("Ações Previsão")
+with st.sidebar:
+    st.title("Ações Prophet")
+    st.caption('Previsão de ações (7,15,30) dias com Prophet')
+    if st.button("Executar"):
+        st.session_state["df"] = executar()
 
-if st.button("Executar"):
-    st.dataframe(executar(), use_container_width=True)
+if "df" in st.session_state:
+    df = st.session_state["df"]
+    st.dataframe(df, use_container_width=True)
