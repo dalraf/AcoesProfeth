@@ -86,11 +86,9 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-with st.sidebar:
-    st.title("Ações Prophet")
-    st.caption('Previsão de ações (7,15,30) dias com Prophet')
-    if st.button("Executar"):
-        st.session_state["df"] = executar()
+
+if not "df" in st.session_state:
+    st.session_state["df"] = executar()
 
 if "df" in st.session_state:
     df = st.session_state["df"]
