@@ -6,6 +6,7 @@ import streamlit as st
 
 # Lista de tickers para baixar dados de ações
 tickers = [
+    "PETR4.SA",
     "AAPL",
     "NU",
     "AMZN",
