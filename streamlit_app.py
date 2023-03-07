@@ -12,6 +12,7 @@ tickers = [
     "AMZN",
     "GOOGL",
     "AMZN",
+    "TSLA",
     "META",
     "MSFT",
     "INTC",
