@@ -43,7 +43,6 @@ def executar():
         end = datetime.datetime.now() - datetime.timedelta(days=1)
         start = datetime.datetime.now() - datetime.timedelta(days=365 * 5)
         df_temp = yf.download(ticker, start=start, end=end)
-        df_temp.index = df_temp.index.tz_localize(None)
         df_temp = df_temp.rename(columns={"Close": "y"})
         df_temp = df_temp[["y"]]
         df_temp.index = pd.DatetimeIndex(df_temp.index.values, freq=df_temp.index.inferred_freq)
