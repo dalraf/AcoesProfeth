@@ -45,9 +45,7 @@ def executar():
         df_temp.index = df_temp.index.tz_localize(None)
         df_temp = df_temp.rename(columns={"Close": "y"})
         df_temp = df_temp[["y"]]
-        df_temp['PriceDate'] =  pd.to_datetime(df_temp.index, format='%m/%d/%Y')
-        df_temp = df_temp.sort_values(by=['PriceDate'], ascending=[True])
-        df_temp.set_index('PriceDate', inplace=True)
+        df_temp.index = pd.DatetimeIndex(df_temp.index.values, freq=df_temp.index.inferred_freq)
 
         # Inicializar o modelo Prophet
         print("Treinando modelo para a ação: " + ticker)
@@ -57,7 +55,7 @@ def executar():
 
         # Criar previsões futuras
         print('Criando previsões para a ação: ' + ticker)
-        forecast = model_fit.forecast(steps=30)
+        forecast = model_fit.forecast(steps=30, freq="D")
         preco_atual = df_temp["y"].iloc[-1]
         variacao_prevista_30 = ((forecast.iloc[-1] - preco_atual) / preco_atual) * 100
         variacao_prevista_15 = ((forecast.iloc[-15] - preco_atual) / preco_atual) * 100
