@@ -3,42 +3,39 @@ from statsmodels.tsa.statespace.sarimax import SARIMAX
 import yfinance as yf
 import datetime
 
-# Lista de tickers para baixar dados de ações
-tickers = [
-    "PETR4.SA",
-    "AAPL",
-    "NU",
-    "AMZN",
-    "GOOGL",
-    "AMZN",
-    "TSLA",
-    "META",
-    "MSFT",
-    "INTC",
-    "CSCO",
-    "NVDA",
-    "PYPL",
-    "NFLX",
-    "IBM",
-    "BTC-USD",
-    "ETH-USD",
-]
-
-analise = pd.DataFrame(
-    columns=[
-        "Acao",
-        "Preco Atual",
-        "Variação (7 dias) %",
-        "Variação (15 dias) %",
-        "Variação (30 dias) %",
-    ]
-)
-
 
 def executar():
+    tickers = [
+        "PETR4.SA",
+        "AAPL",
+        "NU",
+        "AMZN",
+        "GOOGL",
+        "AMZN",
+        "TSLA",
+        "META",
+        "MSFT",
+        "INTC",
+        "CSCO",
+        "NVDA",
+        "PYPL",
+        "NFLX",
+        "IBM",
+        "BTC-USD",
+        "ETH-USD",
+    ]
+
+    analise = pd.DataFrame(
+        columns=[
+            "Acao",
+            "Preco Atual",
+            "Variação (7 dias) %",
+            "Variação (15 dias) %",
+            "Variação (30 dias) %",
+        ]
+    )
 
     for ticker in tickers:
-
         end = datetime.datetime.now() - datetime.timedelta(days=1)
         start = datetime.datetime.now() - datetime.timedelta(days=365 * 5)
         df_temp = yf.download(ticker, start=start, end=end)
@@ -48,12 +45,11 @@ def executar():
 
         # Inicializar o modelo SARIMAX
         print("Treinando modelo para a ação: " + ticker)
-        model = SARIMAX(df_temp, order=(1,1,1), seasonal_order=(1,1,1,12))
+        model = SARIMAX(df_temp, order=(1, 1, 1), seasonal_order=(1, 1, 1, 12))
         model_fit = model.fit()
 
-
         # Criar previsões futuras
-        print('Criando previsões para a ação: ' + ticker)
+        print("Criando previsões para a ação: " + ticker)
         forecast = model_fit.forecast(steps=30, freq="D")
         preco_atual = df_temp["y"].iloc[-1]
         variacao_prevista_30 = ((forecast.iloc[-1] - preco_atual) / preco_atual) * 100
