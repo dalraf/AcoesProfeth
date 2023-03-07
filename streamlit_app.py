@@ -1,3 +1,4 @@
+import streamlit as st
 from functions import executar
 
 st.set_page_config(

@@ -2,7 +2,6 @@ import pandas as pd
 from statsmodels.tsa.statespace.sarimax import SARIMAX
 import yfinance as yf
 import datetime
-import streamlit as st
 
 # Lista de tickers para baixar dados de ações
 tickers = [
