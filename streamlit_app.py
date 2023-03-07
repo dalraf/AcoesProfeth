@@ -1,5 +1,5 @@
 import pandas as pd
-from prophet import Prophet
+from statsmodels.tsa.statespace.sarimax import SARIMAX
 import yfinance as yf
 import datetime
 import streamlit as st
@@ -13,7 +13,6 @@ tickers = [
     "GOOGL",
     "AMZN",
     "META",
-    "TSLA",
     "MSFT",
     "INTC",
     "CSCO",
@@ -32,7 +31,6 @@ analise = pd.DataFrame(
         "Variação (7 dias) %",
         "Variação (15 dias) %",
         "Variação (30 dias) %",
-        "Erro médio percentual de previsao",
     ]
 )
 
@@ -46,26 +44,24 @@ def executar():
         df_temp = yf.download(ticker, start=start, end=end)
         df_temp.index = df_temp.index.tz_localize(None)
         df_temp = df_temp.rename(columns={"Close": "y"})
-        df_temp["ds"] = df_temp.index
-        df_temp = df_temp[["ds", "y"]]
+        df_temp = df_temp[["y"]]
+        df_temp['PriceDate'] =  pd.to_datetime(df_temp.index, format='%m/%d/%Y')
+        df_temp = df_temp.sort_values(by=['PriceDate'], ascending=[True])
+        df_temp.set_index('PriceDate', inplace=True)
 
         # Inicializar o modelo Prophet
-        model = Prophet()
-        model.fit(df_temp)
+        print("Treinando modelo para a ação: " + ticker)
+        model = SARIMAX(df_temp, order=(1,1,1), seasonal_order=(1,1,1,12))
+        model_fit = model.fit()
+
 
         # Criar previsões futuras
-        future = model.make_future_dataframe(periods=30)
-        forecast = model.predict(future)
-        forecast.set_index("ds", inplace=True)
-
+        print('Criando previsões para a ação: ' + ticker)
+        forecast = model_fit.forecast(steps=30)
         preco_atual = df_temp["y"].iloc[-1]
-        variacao_prevista_30 = ((forecast["yhat"].iloc[-1] - preco_atual) / preco_atual) * 100
-        variacao_prevista_15 = ((forecast["yhat"].iloc[-15] - preco_atual) / preco_atual) * 100
-        variacao_prevista_7 = ((forecast["yhat"].iloc[-23] - preco_atual) / preco_atual) * 100
-
-        erro_medio = (
-            (abs(forecast["yhat_upper"] - forecast["yhat_lower"])).mean(skipna=True) / preco_atual
-        ) * 100
+        variacao_prevista_30 = ((forecast.iloc[-1] - preco_atual) / preco_atual) * 100
+        variacao_prevista_15 = ((forecast.iloc[-15] - preco_atual) / preco_atual) * 100
+        variacao_prevista_7 = ((forecast.iloc[-23] - preco_atual) / preco_atual) * 100
 
         # Analisar previsões e decidir se devemos comprar ou vender ações
         lista_temp = [
@@ -74,7 +70,6 @@ def executar():
             variacao_prevista_7,
             variacao_prevista_15,
             variacao_prevista_30,
-            erro_medio,
         ]
         analise.loc[len(analise)] = lista_temp
 
