@@ -38,16 +38,17 @@ analise = pd.DataFrame(
 
 def executar():
 
-    for ticker in [tickers[0]]:
+    for ticker in tickers:
 
         end = datetime.datetime.now() - datetime.timedelta(days=1)
         start = datetime.datetime.now() - datetime.timedelta(days=365 * 5)
         df_temp = yf.download(ticker, start=start, end=end)
         df_temp = df_temp.rename(columns={"Close": "y"})
         df_temp = df_temp[["y"]]
-        df_temp.index = pd.DatetimeIndex(df_temp.index.values, freq=df_temp.index.inferred_freq)
+        df_temp.dropna(inplace=True)
+        df_temp.index = df_temp.index.tz_localize(None).to_period('D')
 
-        # Inicializar o modelo Prophet
+        # Inicializar o modelo SARIMAX
         print("Treinando modelo para a ação: " + ticker)
         model = SARIMAX(df_temp, order=(1,1,1), seasonal_order=(1,1,1,12))
         model_fit = model.fit()
@@ -55,7 +56,9 @@ def executar():
 
         # Criar previsões futuras
         print('Criando previsões para a ação: ' + ticker)
-        forecast = model_fit.forecast(steps=30, freq="D")
+        futuro_start = datetime.datetime.now() + datetime.timedelta(days=1)
+        futuro_end = datetime.datetime.now() + datetime.timedelta(days=30)
+        forecast = model_fit.predict(futuro_start, futuro_end, freq="D")
         print(forecast)
         preco_atual = df_temp["y"].iloc[-1]
         variacao_prevista_30 = ((forecast.iloc[-1] - preco_atual) / preco_atual) * 100
