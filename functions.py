@@ -37,7 +37,7 @@ def executar():
 
     for ticker in tickers:
         end = datetime.datetime.now() - datetime.timedelta(days=1)
-        start = datetime.datetime.now() - datetime.timedelta(days=365 * 5)
+        start = datetime.datetime.now() - datetime.timedelta(days=365 * 2)
         df_temp = yf.download(ticker, start=start, end=end)
         df_temp = df_temp.rename(columns={"Close": "y"})
         df_temp = df_temp[["y"]]
