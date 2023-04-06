@@ -11,7 +11,6 @@ def executar():
         "NU",
         "AMZN",
         "GOOGL",
-        "AMZN",
         "TSLA",
         "META",
         "MSFT",
