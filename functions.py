@@ -1,7 +1,11 @@
 import pandas as pd
-from statsmodels.tsa.statespace.sarimax import SARIMAX
 import yfinance as yf
-import datetime
+from prophet import Prophet
+from datetime import datetime, timedelta
+
+import logging
+logging.getLogger('prophet').setLevel(logging.ERROR)
+logging.getLogger('cmdstanpy').setLevel(logging.ERROR)
 
 
 def executar():
@@ -35,25 +39,30 @@ def executar():
     )
 
     for ticker in tickers:
-        end = datetime.datetime.now() - datetime.timedelta(days=1)
-        start = datetime.datetime.now() - datetime.timedelta(days=365 * 2)
+        end = datetime.now() - timedelta(days=1)
+        start = datetime.now() - timedelta(days=365 * 2)
         df_temp = yf.download(ticker, start=start, end=end)
         df_temp = df_temp.rename(columns={"Close": "y"})
         df_temp = df_temp[["y"]]
         df_temp.dropna(inplace=True)
 
-        # Inicializar o modelo SARIMAX
+        # Preparar o dataframe para o Prophet
+        df_temp.reset_index(inplace=True)
+        df_temp = df_temp.rename(columns={"Date": "ds"})
+
+        # Inicializar o modelo Prophet
         print("Treinando modelo para a ação: " + ticker)
-        model = SARIMAX(df_temp, order=(1, 1, 1), seasonal_order=(1, 1, 1, 12))
-        model_fit = model.fit()
+        model = Prophet(seasonality_mode='multiplicative', daily_seasonality=False, weekly_seasonality=True, yearly_seasonality=True)
+        model.fit(df_temp)
 
         # Criar previsões futuras
         print("Criando previsões para a ação: " + ticker)
-        forecast = model_fit.forecast(steps=30, freq="D")
+        future = model.make_future_dataframe(periods=30, freq='D')
+        forecast = model.predict(future)
         preco_atual = df_temp["y"].iloc[-1]
-        variacao_prevista_30 = ((forecast.iloc[-1] - preco_atual) / preco_atual) * 100
-        variacao_prevista_15 = ((forecast.iloc[-15] - preco_atual) / preco_atual) * 100
-        variacao_prevista_7 = ((forecast.iloc[-23] - preco_atual) / preco_atual) * 100
+        variacao_prevista_30 = ((forecast["yhat"].iloc[-1] - preco_atual) / preco_atual) * 100
+        variacao_prevista_15 = ((forecast["yhat"].iloc[-15] - preco_atual) / preco_atual) * 100
+        variacao_prevista_7 = ((forecast["yhat"].iloc[-23] - preco_atual) / preco_atual) * 100
 
         # Analisar previsões e decidir se devemos comprar ou vender ações
         lista_temp = [
