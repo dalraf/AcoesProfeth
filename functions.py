@@ -46,7 +46,7 @@ def executar():
             "Variação (7 dias) %",
             "Variação (15 dias) %",
             "Variação (30 dias) %",
-            "Média Erro Quadrático",
+            "Erro da previsão",
         ]
     )
 
