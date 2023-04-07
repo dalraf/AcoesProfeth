@@ -42,7 +42,7 @@ def executar():
 
     for ticker in tickers:
         end = datetime.now() - timedelta(days=1)
-        start = datetime.now() - timedelta(days=365 * 2)
+        start = datetime.now() - timedelta(days=365 * 4)
         df_temp = yf.download(ticker, start=start, end=end)
 
         # Preparar o dataframe para o Prophet
