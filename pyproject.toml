@@ -6,10 +6,11 @@ authors = ["Daniel Fonseca Alves <dalraf@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "^3.10"
 pandas = "^1.5.3"
 yfinance = "^0.2.9"
 prophet = "^1.1.2"
+streamlit = "^1.21.0"
 
 
 [tool.poetry.group.dev.dependencies]
