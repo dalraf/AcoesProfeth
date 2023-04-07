@@ -1792,6 +1792,21 @@ watchdog = {version = "*", markers = "platform_system != \"Darwin\""}
 snowflake = ["snowflake-snowpark-python"]
 
 [[package]]
+name = "ta"
+version = "0.10.2"
+description = "Technical Analysis Library in Python"
+category = "main"
+optional = false
+python-versions = "*"
+files = [
+    {file = "ta-0.10.2.tar.gz", hash = "sha256:e8d193dadd44d88e3c4118dc5224e2fcdc0235caba3efa758aa7a875ffba2faa"},
+]
+
+[package.dependencies]
+numpy = "*"
+pandas = "*"
+
+[[package]]
 name = "toml"
 version = "0.10.2"
 description = "Python Library for Tom's Obvious, Minimal Language"
@@ -2042,4 +2057,4 @@ testing = ["big-O", "flake8 (<5)", "jaraco.functools", "jaraco.itertools", "more
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "fef2d4b7979d8e189f383f95adb72da53b7011d777b1363fd28397f7ae392e0e"
+content-hash = "e2de9a3339a4a227d6e000fd3f36659aefc9e8dc880f46a533af41b256e3323e"

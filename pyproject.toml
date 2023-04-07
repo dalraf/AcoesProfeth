@@ -11,6 +11,7 @@ pandas = "^1.5.3"
 yfinance = "^0.2.9"
 prophet = "^1.1.2"
 streamlit = "^1.21.0"
+ta = "^0.10.2"
 
 
 [tool.poetry.group.dev.dependencies]
