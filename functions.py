@@ -4,10 +4,19 @@ from prophet import Prophet
 from datetime import datetime, timedelta
 from ta.momentum import RSIIndicator
 from ta.trend import MACD
+from sklearn.metrics import mean_squared_error
+
 
 import logging
 logging.getLogger('prophet').setLevel(logging.ERROR)
 logging.getLogger('cmdstanpy').setLevel(logging.ERROR)
+
+
+def calculate_rmse(original_df, forecast_df):
+    original_values = original_df['y'].values
+    predicted_values = forecast_df['yhat'].values[:len(original_values)]
+    rmse = mean_squared_error(original_values, predicted_values, squared=False)
+    return rmse
 
 
 def executar():
@@ -37,6 +46,7 @@ def executar():
             "Variação (7 dias) %",
             "Variação (15 dias) %",
             "Variação (30 dias) %",
+            "Média Erro Quadrático",
         ]
     )
 
@@ -78,13 +88,14 @@ def executar():
         variacao_prevista_15 = ((forecast["yhat"].iloc[-15] - preco_atual) / preco_atual) * 100
         variacao_prevista_7 = ((forecast["yhat"].iloc[-23] - preco_atual) / preco_atual) * 100
 
-        # Analisar previsões e decidir se devemos comprar ou vender ações
+        rmse = calculate_rmse(df_temp, forecast)
         lista_temp = [
             ticker,
             preco_atual,
             variacao_prevista_7,
             variacao_prevista_15,
             variacao_prevista_30,
+            rmse,
         ]
         analise.loc[len(analise)] = lista_temp
 
