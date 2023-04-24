@@ -43,6 +43,7 @@ def executar():
         columns=[
             "Acao",
             "Preco Atual",
+            "Variação (1 dia) %",
             "Variação (7 dias) %",
             "Variação (15 dias) %",
             "Variação (30 dias) %",
@@ -87,11 +88,13 @@ def executar():
         variacao_prevista_30 = ((forecast["yhat"].iloc[-1] - preco_atual) / preco_atual) * 100
         variacao_prevista_15 = ((forecast["yhat"].iloc[-15] - preco_atual) / preco_atual) * 100
         variacao_prevista_7 = ((forecast["yhat"].iloc[-23] - preco_atual) / preco_atual) * 100
+        variacao_prevista_1 = ((forecast["yhat"].iloc[-29] - preco_atual) / preco_atual) * 100        
 
         rmse = calculate_rmse(df_temp, forecast)
         lista_temp = [
             ticker,
             preco_atual,
+            variacao_prevista_1,
             variacao_prevista_7,
             variacao_prevista_15,
             variacao_prevista_30,
