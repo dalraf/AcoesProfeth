@@ -21,22 +21,15 @@ def calculate_rmse(original_df, forecast_df):
 
 def executar():
     tickers = [
-        "PETR4.SA",
-        "AAPL",
-        "NU",
-        "AMZN",
-        "GOOGL",
-        "TSLA",
-        "META",
-        "MSFT",
-        "INTC",
-        "CSCO",
-        "NVDA",
-        "PYPL",
-        "NFLX",
-        "IBM",
         "BTC-USD",
         "ETH-USD",
+        "BCH-USD",
+        "AAVE-USD",
+        "SOL-USD",
+        "LINK-USD",
+        "LTC-USD",
+        "UNI7083-USD",
+        "MATIC-USD",
     ]
 
     analise = pd.DataFrame(
