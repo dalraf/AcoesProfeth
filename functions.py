@@ -8,13 +8,14 @@ from sklearn.metrics import mean_squared_error
 
 
 import logging
-logging.getLogger('prophet').setLevel(logging.ERROR)
-logging.getLogger('cmdstanpy').setLevel(logging.ERROR)
+
+logging.getLogger("prophet").setLevel(logging.ERROR)
+logging.getLogger("cmdstanpy").setLevel(logging.ERROR)
 
 
 def calculate_rmse(original_df, forecast_df):
-    original_values = original_df['y'].values
-    predicted_values = forecast_df['yhat'].values[:len(original_values)]
+    original_values = original_df["y"].values
+    predicted_values = forecast_df["yhat"].values[: len(original_values)]
     rmse = mean_squared_error(original_values, predicted_values, squared=False)
     return rmse
 
@@ -36,11 +37,7 @@ def executar():
         columns=[
             "Acao",
             "Preco Atual",
-            "Variação (1 dia) %",
-            "Variação (7 dias) %",
-            "Variação (15 dias) %",
-            "Variação (30 dias) %",
-            "Erro da previsão",
+            "Indice NERF",
         ]
     )
 
@@ -55,43 +52,42 @@ def executar():
         df_temp.reset_index(inplace=True)
         df_temp = df_temp.rename(columns={"Date": "ds"})
 
-        rsi = RSIIndicator(df_temp['y'], window=14)
-        df_temp['rsi'] = rsi.rsi()
+        rsi = RSIIndicator(df_temp["y"], window=14)
+        df_temp["rsi"] = rsi.rsi()
 
-        macd = MACD(df_temp['y'])
-        df_temp['macd'] = macd.macd()
+        macd = MACD(df_temp["y"])
+        df_temp["macd"] = macd.macd()
 
         df_temp.dropna(inplace=True)
 
         # Inicializar o modelo Prophet
         print("Treinando modelo para a ação: " + ticker)
-        model = Prophet(seasonality_mode='multiplicative', daily_seasonality=False, weekly_seasonality=True, yearly_seasonality=True)
-        model.add_regressor('rsi')
-        model.add_regressor('macd')
+        model = Prophet(
+            seasonality_mode="multiplicative",
+            daily_seasonality=False,
+            weekly_seasonality=True,
+            yearly_seasonality=True,
+        )
+        model.add_regressor("rsi")
+        model.add_regressor("macd")
         model.fit(df_temp)
 
         # Criar previsões futuras
         print("Criando previsões para a ação: " + ticker)
-        future = model.make_future_dataframe(periods=30, freq='D')
-        future['rsi'] = rsi.rsi()
-        future['macd'] = macd.macd()
+        future = model.make_future_dataframe(periods=30, freq="D")
+        future["rsi"] = rsi.rsi()
+        future["macd"] = macd.macd()
         future.dropna(inplace=True)
         forecast = model.predict(future)
         preco_atual = df_temp["y"].iloc[-1]
-        variacao_prevista_30 = ((forecast["yhat"].iloc[-1] - preco_atual) / preco_atual) * 100
-        variacao_prevista_15 = ((forecast["yhat"].iloc[-15] - preco_atual) / preco_atual) * 100
-        variacao_prevista_7 = ((forecast["yhat"].iloc[-23] - preco_atual) / preco_atual) * 100
-        variacao_prevista_1 = ((forecast["yhat"].iloc[-29] - preco_atual) / preco_atual) * 100        
-
         rmse = calculate_rmse(df_temp, forecast)
+        indice_nerf = (
+            (((forecast["yhat"].iloc[-24] - preco_atual) / preco_atual) * 100) / rmse
+        ) * 1000
         lista_temp = [
             ticker,
             preco_atual,
-            variacao_prevista_1,
-            variacao_prevista_7,
-            variacao_prevista_15,
-            variacao_prevista_30,
-            rmse,
+            indice_nerf,
         ]
         analise.loc[len(analise)] = lista_temp
 
