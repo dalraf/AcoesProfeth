@@ -31,6 +31,16 @@ def executar():
         "LTC-USD",
         "UNI7083-USD",
         "MATIC-USD",
+        "AAPL",
+        "MSFT",
+        "GOOGL",
+        "AMZN",
+        "TSLA",
+        "NVDA",
+        "META",
+        "INTC",
+        "IBM",
+        "TXN"
     ]
 
     analise = pd.DataFrame(
@@ -90,7 +100,7 @@ def executar():
             indice_nerf,
         ]
         analise.loc[len(analise)] = lista_temp
-        analise_ordenado = df.sort_values(by="indice_nerf", ascending=False)
+        analise_ordenado = analise.sort_values(by="Indice NERF", ascending=False)
 
 
     return analise_ordenado
