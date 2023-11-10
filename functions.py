@@ -90,5 +90,7 @@ def executar():
             indice_nerf,
         ]
         analise.loc[len(analise)] = lista_temp
+        analise_ordenado = df.sort_values(by="indice_nerf", ascending=False)
 
-    return analise
+
+    return analise_ordenado
